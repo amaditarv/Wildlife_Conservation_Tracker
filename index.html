@@ -138,37 +138,31 @@
   <!-- Tambahkan jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <script>
-    $('#loginForm').on('submit', function (e) {
+      <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
-
-      const email = $('#email').val();
-      const pass = $('#pass').val();
-
-      $.ajax({
-        url: 'http://localhost:8080/WCT/login', // Ganti NamaProjectKamu sesuai project
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ email: email, pass: pass }),
-        success: function (response) {
-          if (response.status === "success") {
-            localStorage.setItem("User",JSON.stringify(response));
-
-            $('#loginFailed').hide();
-            $('#loginSuccess').text(response.message).show();
-            setTimeout(function () {
-              window.location.href = "homepage.html";
-            }, 3000);
-          } else {
-            $('#loginSuccess').hide();
-            $('#loginFailed').text(response.message).show();
-          }
-        },
-        error: function (xhr) {
-          $('#loginFailed').text("Server error").show();
-        }
-      });
+    
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("pass").value;
+    
+      // Dummy login (bisa kamu ubah)
+      if (email === "admin@gmail.com" && pass === "123") {
+        document.getElementById("loginFailed").style.display = "none";
+        const success = document.getElementById("loginSuccess");
+        success.innerText = "Login berhasil!";
+        success.style.display = "block";
+    
+        setTimeout(function () {
+          window.location.href = "index.html"; // pastikan ini sesuai
+        }, 1500);
+    
+      } else {
+        document.getElementById("loginSuccess").style.display = "none";
+        const fail = document.getElementById("loginFailed");
+        fail.innerText = "Email atau password salah";
+        fail.style.display = "block";
+      }
     });
-  </script>
+    </script>
 </body>
 </html>
