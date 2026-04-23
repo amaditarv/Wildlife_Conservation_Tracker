@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Animal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'SF Pro Displays', sans-serif;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+      position: relative;
+    }
+    .left-rectangle {
+      width: 30%;
+      background: linear-gradient(135deg, #71F3FF, #1FDAAE);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      color: white;
+    }
+    .left-content {
+      margin-top: 40px;
+      text-align: center;
+    }
+    .left-rectangle h1 {
+      font-size: 80px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .left-rectangle h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .middle-content {
+      width: 30%;
+      background-color: #ffffff;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .right-form-side {
+      width: 38%;
+      background-color: #ffffff;
+      padding: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .middle-content h1 {
+      font-size: 45px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+
+    .form-spacing {
+      margin-top: 40px; /* turunkan form */
+    }
+
+    .form-group {
+      margin-bottom: 40px; /* besarkan gap antar box */
+      width: 100%;
+    }
+
+    .custom-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 450;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+      width: 100%;
+      padding: 10px 18px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #63EFF0;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: inner-spin-button;
+      transform: scale(1.7);
+      margin-right: 4px;
+    }
+
+    .next-button-container {
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+    }
+
+    .next-button {
+      background-color: #1FDAAE;
+      color: white;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .next-button:hover {
+      background-color: #1bc199;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- BAGIAN KIRI -->
+    <div class="left-rectangle">
+      <div class="left-content">
+        <h1><span class="bold-text">WCT</span><br><span class="bold-text">PAWL</span></h1>
+        <h2>Eyes on Wildlife</h2>
+      </div>
+    </div>
+
+    <!-- BAGIAN TENGAH -->
+    <div class="middle-content">
+      <h1>Add Animal Detail,</h1>
+      <form class="form-spacing">
+        <div class="form-group">
+          <label for="name" class="custom-label">Name</label>
+          <input type="text" id="name" name="name" />
+        </div>
+
+        <div class="form-group">
+          <label for="scientific" class="custom-label">Scientific Name</label>
+          <input type="text" id="scientific" name="scientific_name" />
+        </div>
+
+        <div class="form-group">
+          <label for="weight" class="custom-label">Weight (kg)</label>
+          <input type="number" id="weight" name="weight" min="0" step="0.1" />
+        </div>
+
+        <div class="form-group">
+          <label for="height" class="custom-label">Height (cm)</label>
+          <input type="number" id="height" name="height" min="0" step="0.1" />
+        </div>
+
+        <div class="form-group">
+          <label for="color" class="custom-label">Color</label>
+          <input type="text" id="color" name="color" />
+        </div>
+      </form>
+    </div>
+
+    <!-- BAGIAN KANAN -->
+    <div class="right-form-side">
+      <form class="form-spacing">
+        <div class="form-group">
+          <label for="characteristic" class="custom-label">Characteristic</label>
+          <input type="text" id="characteristic" name="characteristic" />
+        </div>
+
+        <div class="form-group">
+          <label for="province" class="custom-label">Provinces</label>
+          <input type="text" id="province" name="province" />
+        </div>
+      </form>
+    </div>
+
+    <!-- TOMBOL SAVE DI KANAN BAWAH -->
+    <div class="next-button-container">
+      <a href="addAnimalDetail2.html">
+        <button type="submit" class="next-button">Next</button>
+      </a>
+      
+    </div>
+
+  </div>
+</body>
+</html>

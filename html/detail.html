@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profil Hewan</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f0fdf9;
+      font-size: 16px;
+    }
+    .container-custom {
+      max-width: 1200px;
+      margin: auto;
+    }
+    .profile-img {
+      object-fit: cover;
+      height: 220px;
+      width: 220px;
+      border-radius: 1rem;
+    }
+    .editable {
+      background-color: #e8fff6;
+    }
+    .form-label {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    .loading-spinner {
+      display: none;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 0.25rem solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-custom py-4 px-3">
+    <div class="position-relative p-4 bg-white rounded shadow">
+      <!-- Tombol -->
+      <div class="d-flex justify-content-end gap-2 mb-3">
+        <button id="editBtn" class="btn btn-outline-primary btn-sm" onclick="enableEdit()">Edit</button>
+        <button id="saveBtn" class="btn btn-primary btn-sm d-none" onclick="saveData()">
+          <span id="saveText">Simpan</span>
+          <span id="saveSpinner" class="loading-spinner ms-2"></span>
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="goBack()">Kembali</button>
+      </div>
+
+      <!-- Header -->
+      <div class="d-flex flex-wrap gap-4 align-items-start">
+        <img src="Images/default.jpg" alt="Foto Hewan" class="profile-img shadow-sm" id="animalImage" />
+        <div class="flex-grow-1">
+          <input id="nama" class="form-control fs-3 fw-bold border-0 p-0 bg-transparent" value="Memuat data..." readonly />
+          <div class="bg-light rounded p-3 mt-2 text-center shadow-sm" id="speciesInfo">
+            <strong id="speciesLatin">Memuat...</strong><br />
+            <span id="speciesIndo"></span><br />
+            <em id="speciesNote"></em>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail 3 Kolom -->
+      <div class="row mt-4 g-3">
+        <!-- Kolom 1 -->
+        <div class="col-md-4">
+          <div class="card p-3 shadow-sm">
+            <label class="form-label">Berat (kg)</label>
+            <input type="number" id="berat" class="form-control" readonly>
+            <label class="form-label mt-3">Tinggi (cm)</label>
+            <input type="number" id="tinggi" class="form-control" readonly>
+            <label class="form-label mt-3">Panjang (cm)</label>
+            <input type="number" id="panjang" class="form-control" readonly>
+            <label class="form-label mt-3">Warna</label>
+            <input type="text" id="warna" class="form-control" readonly>
+            <label class="form-label mt-3">Ciri Khas</label>
+            <textarea id="ciri" class="form-control" rows="3" readonly></textarea>
+            <label class="form-label mt-3">Provinsi Asal</label>
+            <input type="text" id="asal" class="form-control" readonly>
+          </div>
+        </div>
+
+        <!-- Kolom 2 -->
+        <div class="col-md-4">
+          <div class="card p-3 shadow-sm">
+            <label class="form-label">Aktivitas Harian</label>
+            <textarea id="aktivitas" class="form-control" rows="3" readonly></textarea>
+            <label class="form-label mt-3">Pola Makan</label>
+            <textarea id="polaMakan" class="form-control" rows="2" readonly></textarea>
+            <label class="form-label mt-3">Sifat Sosial</label>
+            <textarea id="sifatSosial" class="form-control" rows="2" readonly></textarea>
+            <label class="form-label mt-3">Musim Kawin</label>
+            <input type="text" id="musimText" class="form-control" readonly>
+          </div>
+        </div>
+
+        <!-- Kolom 3 -->
+        <div class="col-md-4">
+          <div class="card p-3 shadow-sm">
+            <label class="form-label">Terakhir Diamati</label>
+            <input type="text" id="terakhir" class="form-control" readonly>
+            <label class="form-label mt-3">Zona</label>
+            <select id="zona" class="form-select" disabled>
+              <option value="Zona 1">Zona 1</option>
+              <option value="Zona 2">Zona 2</option>
+              <option value="Zona 3">Zona 3</option>
+            </select>
+            <label class="form-label mt-3">Rincian Lokasi</label>
+            <input type="text" id="lokasi" class="form-control" readonly>
+            <label class="form-label mt-3">Kondisi</label>
+            <input type="text" id="kondisi" class="form-control" readonly>
+            <label class="form-label mt-3">Catatan</label>
+            <textarea id="catatan" class="form-control" rows="3" readonly></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    // Global variable to store original data
+    let originalData = {};
+
+    function enableEdit() {
+      document.querySelectorAll('input, textarea').forEach(el => {
+        if (el.id !== 'musimText') {
+          el.removeAttribute('readonly');
+          el.classList.add('editable');
+        }
+      });
+      document.getElementById('zona').disabled = false;
+      document.getElementById('editBtn').classList.add('d-none');
+      document.getElementById('saveBtn').classList.remove('d-none');
+    }
+
+    function showLoading(show) {
+      const spinner = document.getElementById('saveSpinner');
+      const text = document.getElementById('saveText');
+      spinner.style.display = show ? 'inline-block' : 'none';
+      text.textContent = show ? 'Menyimpan...' : 'Simpan';
+      document.getElementById('saveBtn').disabled = show;
+    }
+
+    function saveData() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const animalId = urlParams.get("animal_id");
+
+      // Validate required fields
+      const berat = document.getElementById("berat").value;
+      if (!berat || isNaN(parseFloat(berat))) {
+        alert("Berat harus diisi dengan angka yang valid");
+        return;
+      }
+
+      const data = {
+        animal_id: parseInt(animalId),
+        weight: parseFloat(berat),
+        height: parseFloat(document.getElementById("tinggi").value) || null,
+        length: parseFloat(document.getElementById("panjang").value) || null,
+        color: document.getElementById("warna").value || null,
+        distinguishing_features: document.getElementById("ciri").value || null,
+        province: document.getElementById("asal").value || null,
+        daily_activity: document.getElementById("aktivitas").value || null,
+        diet: document.getElementById("polaMakan").value || null,
+        social_behavior: document.getElementById("sifatSosial").value || null,
+        mating_season: document.getElementById("musimText").value || null
+      };
+
+      showLoading(true);
+
+      fetch("http://localhost:8080/WCT/updateAnimal", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(err.message || `HTTP error! status: ${response.status}`);
+          });
+        }
+        return response.json();
+      })
+      .then(result => {
+        if (result.status === "success") {
+          alert("✅ " + result.message);
+          // Update original data with new values
+          Object.assign(originalData, data);
+        } else {
+          throw new Error(result.message || "Gagal memperbarui data");
+        }
+      })
+      .catch(err => {
+        console.error("Save error:", err);
+        alert("❌ Gagal menyimpan: " + err.message);
+        // Revert to original values
+        loadDataIntoForm(originalData);
+      })
+      .finally(() => {
+        showLoading(false);
+        // Return form to readonly
+        document.querySelectorAll('input, textarea').forEach(el => {
+          el.setAttribute('readonly', true);
+          el.classList.remove('editable');
+        });
+        document.getElementById('zona').disabled = true;
+        document.getElementById('editBtn').classList.remove('d-none');
+        document.getElementById('saveBtn').classList.add('d-none');
+      });
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+
+    function loadDataIntoForm(data) {
+      const setValue = (id, value, fallback = "") => {
+        const el = document.getElementById(id);
+        if (el) el.value = value !== undefined && value !== null ? value : fallback;
+      };
+
+      const setText = (id, value, fallback = "") => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value !== undefined && value !== null ? value : fallback;
+      };
+
+      // Basic animal info
+      setValue("nama", data.name, "Nama tidak tersedia");
+      setValue("berat", data.weight);
+      
+      // Detail info
+      setValue("tinggi", data.height);
+      setValue("panjang", data.length);
+      setValue("warna", data.color);
+      setValue("ciri", data.distinguishing_features);
+      setValue("asal", data.province);
+      setValue("aktivitas", data.daily_activity);
+      setValue("polaMakan", data.diet);
+      setValue("sifatSosial", data.social_behavior);
+      setValue("musimText", data.mating_season);
+
+      // Image handling
+      const imgEl = document.getElementById("animalImage");
+      if (imgEl) {
+        imgEl.src = data.photo_url || "Images/default.jpg";
+        imgEl.alt = `Foto ${data.name || 'hewan'}`;
+      }
+
+      // Species info
+      setText("speciesLatin", data.species_name, "Spesies tidak diketahui");
+      setText("speciesIndo", data.species_local);
+      setText("speciesNote", data.species_note);
+    }
+
+    // Load Data from Backend
+    document.addEventListener("DOMContentLoaded", function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const animalId = urlParams.get("animal_id");
+
+      if (!animalId) {
+        alert("ID hewan tidak ditemukan di URL.");
+        return;
+      }
+
+      fetch("http://localhost:8080/WCT/animalDetail", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ animal_id: parseInt(animalId) })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(err.message || `HTTP error! status: ${response.status}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (!data || typeof data !== 'object') {
+          throw new Error("Format data tidak valid dari server");
+        }
+
+        if (data.status !== "success") {
+          throw new Error(data.message || "Gagal memuat data: status tidak success");
+        }
+
+        const animal = data.animal || {};
+        const detail = animal.detail || {};
+        const observations = detail.observations || [];
+        const lastObs = observations.length > 0 ? observations[observations.length - 1] : {};
+
+        // Combine all data into one object
+        const completeData = {
+          ...animal,
+          ...detail,
+          observation_time: lastObs.observation_time,
+          location: lastObs.location,
+          animal_condition: lastObs.animal_condition,
+          notes: lastObs.notes
+        };
+
+        // Store original data
+        originalData = JSON.parse(JSON.stringify(completeData));
+
+        // Load data into form
+        loadDataIntoForm(completeData);
+
+        // Set observation-specific fields
+        document.getElementById("terakhir").value = lastObs.observation_time || "-";
+        document.getElementById("lokasi").value = lastObs.location || "-";
+        document.getElementById("kondisi").value = lastObs.animal_condition || "-";
+        document.getElementById("catatan").value = lastObs.notes || "-";
+        document.getElementById("zona").value = "Zona 1"; // Default value
+      })
+      .catch(error => {
+        console.error("Error loading animal data:", error);
+        
+        let errorMessage = "Gagal memuat data hewan: ";
+        if (error.message.includes("Failed to fetch")) {
+          errorMessage += "Tidak dapat terhubung ke server. ";
+          errorMessage += "1. Pastikan server sedang berjalan\n";
+          errorMessage += "2. Periksa koneksi internet Anda";
+        } else {
+          errorMessage += error.message;
+        }
+        
+        alert(errorMessage);
+        
+        // Show placeholder UI
+        document.getElementById("nama").value = "[Data tidak dapat dimuat]";
+        document.getElementById("animalImage").src = "Images/default.jpg";
+        document.getElementById("speciesLatin").innerText = "Data tidak tersedia";
+      });
+    });
+  </script>
+</body>
+</html>
